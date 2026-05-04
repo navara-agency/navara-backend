@@ -13,13 +13,28 @@ const { sequelize } = require('../config/db');
 const logger = require('../config/logger');
 require('../models');
 
-const FRONTEND_ROOT = path.resolve(__dirname, '..', '..', '..', 'frontend', 'src');
-const MOCK_PATH = path.join(FRONTEND_ROOT, 'data', 'mockDashboard.js');
-const EN_PATH = path.join(FRONTEND_ROOT, 'locales', 'en.json');
-const AR_PATH = path.join(FRONTEND_ROOT, 'locales', 'ar.json');
+// Try the mono-repo layout first (frontend/ as a sibling of backend/); fall back to the
+// bundled copies inside this repo (used after we split the project into separate repos).
+const MONO_FRONTEND_ROOT = path.resolve(__dirname, '..', '..', '..', 'frontend', 'src');
+const MOCK_PATH_MONO = path.join(MONO_FRONTEND_ROOT, 'data', 'mockDashboard.js');
+const EN_PATH_MONO = path.join(MONO_FRONTEND_ROOT, 'locales', 'en.json');
+const AR_PATH_MONO = path.join(MONO_FRONTEND_ROOT, 'locales', 'ar.json');
+
+const BUNDLED_LOCALES = path.join(__dirname, 'locales');
+const EN_PATH_BUNDLED = path.join(BUNDLED_LOCALES, 'en.json');
+const AR_PATH_BUNDLED = path.join(BUNDLED_LOCALES, 'ar.json');
+
+const MOCK_PATH = fs.existsSync(MOCK_PATH_MONO) ? MOCK_PATH_MONO : null;
+const EN_PATH = fs.existsSync(EN_PATH_MONO) ? EN_PATH_MONO : EN_PATH_BUNDLED;
+const AR_PATH = fs.existsSync(AR_PATH_MONO) ? AR_PATH_MONO : AR_PATH_BUNDLED;
 
 async function loadMocks() {
-  // Frontend uses ESM; load via dynamic import from CJS
+  // mockDashboard.js only exists in the mono-repo; in the standalone backend, return empty
+  // and let the admin populate FAQ / testimonials / etc. via the dashboard.
+  if (!MOCK_PATH) {
+    logger.info('seed: mockDashboard.js not found — skipping FAQ/testimonials/cases/logos seed (admin populates via dashboard)');
+    return {};
+  }
   const url = pathToFileURL(MOCK_PATH).href;
   return await import(url);
 }

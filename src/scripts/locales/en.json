@@ -1,0 +1,730 @@
+{
+  "floatingContacts": {
+    "phone": "Call us",
+    "whatsapp": "Chat on WhatsApp",
+    "whatsappLabel": "WhatsApp",
+    "instagram": "Follow us on Instagram",
+    "instagramLabel": "Instagram",
+    "linkedin": "Connect on LinkedIn",
+    "linkedinLabel": "LinkedIn"
+  },
+
+  "common": {
+    "cta": {
+      "bookCall": "Book a Call",
+      "whatsapp": "Send Inquiry on WhatsApp"
+    },
+    "placeholder": {
+      "caseStudy": "Case study coming soon",
+      "testimonial": "Client testimonial coming soon",
+      "clientLogos": "Client logos, coming soon",
+      "partnerBadge": "Partner badge placeholder"
+    }
+  },
+
+  "nav": {
+    "links": {
+      "services": "Services",
+      "about": "About",
+      "industries": "Industries",
+      "howWeWork": "How We Work",
+      "faqs": "FAQs",
+      "contact": "Contact"
+    },
+    "cta": "Book a Call",
+    "lang": {
+      "en": "EN",
+      "ar": "AR"
+    },
+    "mobileMenuOpen": "Open menu",
+    "mobileMenuClose": "Close menu",
+    "aria": "Main navigation"
+  },
+
+  "footer": {
+    "tagline": "integrated growth partner™",
+    "description": "Structured marketing execution for ambitious brands in Egypt and KSA.",
+    "services": {
+      "heading": "Services",
+      "brandPresence": "Brand Presence Management",
+      "performance": "Performance Marketing",
+      "integrated": "Integrated Growth Management",
+      "creative": "Creative & Content Execution",
+      "seo": "SEO & Organic Support"
+    },
+    "company": {
+      "heading": "Company",
+      "about": "About",
+      "industries": "Industries",
+      "howWeWork": "How We Work",
+      "contact": "Contact"
+    },
+    "connect": {
+      "heading": "Connect",
+      "whatsapp": "Chat with us on WhatsApp",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "email": "hello@navara.com"
+    },
+    "copyright": "© 2026 Navara. All rights reserved.",
+    "adSpendNote": "Ad spend is separate from management fees unless otherwise agreed in writing."
+  },
+
+  "home": {
+    "seo": {
+      "title": "Integrated Growth Marketing Partner in Egypt & KSA | Navara",
+      "description": "Navara helps established brands in Egypt and KSA strengthen digital presence, customer acquisition, and long-term growth through structured execution and premium client experience."
+    },
+    "hero": {
+      "eyebrow": "Egypt & KSA",
+      "h1Line1": "Structured {{word}}",
+      "h1CycleWords": ["Growth.", "Results.", "Impact.", "Success."],
+      "h1Line2": "Premium Execution.",
+      "sub": "One integrated partner for brand, content, and performance.",
+      "support": "No disconnected activity. No guesswork.",
+      "body": "Navara helps established businesses strengthen brand presence, improve customer acquisition, and build long-term growth through strategy, creative execution, paid media support, and premium client experience."
+    },
+    "trust": {
+      "heading": "Trusted by ambitious businesses building stronger digital growth",
+      "chips": {
+        "focus": "Egypt & KSA Focus",
+        "model": "Integrated Growth Model",
+        "experience": "Premium Client Experience",
+        "delivery": "Structured Monthly Delivery"
+      }
+    },
+    "whoWeHelp": {
+      "h2": "Built for brands that need more than random marketing activity",
+      "body": "We work with established businesses that need a stronger digital presence, better acquisition systems, and a more organized marketing partner. Navara is designed for ambitious brands in Egypt and KSA that value execution quality, operating clarity, and long-term growth."
+    },
+    "services": {
+      "h2": "Services built around growth, not disconnected tasks",
+      "subheading": "We connect strategy, creative execution, paid media, and performance management in one structured monthly operating model.",
+      "cta": "Explore Our Services",
+      "card1": {
+        "title": "Brand Presence Management",
+        "body": "Build a stronger and more consistent digital presence through structured monthly content planning, creative execution, and account management."
+      },
+      "card2": {
+        "title": "Performance Marketing",
+        "body": "Support lead generation and acquisition through campaign strategy, paid media execution (Meta & Google Ads), and ongoing optimization."
+      },
+      "card3": {
+        "title": "Integrated Growth Management",
+        "body": "Combine brand, content, paid media, and performance support into one structured monthly operating model."
+      },
+      "card4": {
+        "title": "Creative & Content Execution",
+        "body": "Graphic design, motion design, short-form video editing, and content planning aligned to real business priorities."
+      },
+      "card5": {
+        "title": "Reporting & Account Management",
+        "body": "Clear monthly reporting, review cadence, and service coordination designed to protect both quality and accountability."
+      }
+    },
+    "whyNavara": {
+      "h2": "Why ambitious brands choose Navara",
+      "point1": {
+        "title": "Business-first approach",
+        "body": "We build around business need, not random service lists."
+      },
+      "point2": {
+        "title": "Integrated execution model",
+        "body": "We combine brand execution and growth execution in one structured model."
+      },
+      "point3": {
+        "title": "Premium quality focus",
+        "body": "We prioritize premium service quality and a better client experience."
+      },
+      "point4": {
+        "title": "Controlled delivery",
+        "body": "We protect delivery through defined scope, clear process, and controlled expansion."
+      },
+      "point5": {
+        "title": "Built for Egypt & KSA",
+        "body": "We are designed for ambitious established brands in Egypt and KSA."
+      }
+    },
+    "howWeWorkSummary": {
+      "h2": "A clearer process from discovery to execution",
+      "cta": "See How We Work",
+      "step1": {
+        "number": "01",
+        "title": "Discovery",
+        "body": "Understand the business model, current digital maturity, goals, and operating needs."
+      },
+      "step2": {
+        "number": "02",
+        "title": "Recommendation",
+        "body": "Match the right structure to the right need: presence, acquisition, or integrated growth."
+      },
+      "step3": {
+        "number": "03",
+        "title": "Planning",
+        "body": "Build the monthly plan, scope, priorities, and approval flow."
+      },
+      "step4": {
+        "number": "04",
+        "title": "Execution",
+        "body": "Deliver content, campaigns, creative production, and account coordination through a structured monthly model."
+      },
+      "step5": {
+        "number": "05",
+        "title": "Reporting & Optimization",
+        "body": "Review results, align priorities, and improve the next cycle."
+      }
+    },
+    "proof": {
+      "h2": "Execution designed to support quality and business outcomes",
+      "intro": "Navara is built to help established brands improve visibility, acquisition, and delivery discipline through structured monthly execution.",
+      "cta": "View Selected Work"
+    },
+    "stats": {
+      "heading": "Built on results, not promises",
+      "stat1": { "number": "50+", "numericValue": 50, "label": "Brands Served" },
+      "stat2": { "number": "2", "numericValue": 2, "label": "Markets Covered" },
+      "stat3": { "number": "5+", "numericValue": 5, "label": "Years Experience" },
+      "stat4": { "number": "98%", "numericValue": 98, "label": "Client Satisfaction" }
+    },
+    "testimonials": {
+      "h2": "What clients value most about working with Navara"
+    },
+    "faq": {
+      "h2": "Frequently Asked Questions",
+      "item1": {
+        "q": "What kind of businesses does Navara work with?",
+        "a": "Navara works with established businesses in Egypt and KSA that need stronger digital presence, better acquisition systems, and a more structured marketing partner."
+      },
+      "item2": {
+        "q": "Do you work on monthly retainers or one-off projects?",
+        "a": "Our preferred model is structured monthly retainers because they create better planning, accountability, and execution quality. Selected add-ons or launch work can be handled separately where relevant."
+      },
+      "item3": {
+        "q": "Do you show package names publicly on the website?",
+        "a": "No. We present services publicly by business need and recommend the right structure after discovery."
+      },
+      "item4": {
+        "q": "Is ad spend included in your management fee?",
+        "a": "Ad spend is separate from management fees unless otherwise agreed in writing."
+      },
+      "item5": {
+        "q": "How do we get started?",
+        "a": "The fastest starting point is a short intro call or a WhatsApp inquiry so we can understand your goals, current setup, and the best-fit scope."
+      },
+      "item6": {
+        "q": "What makes working with Navara different?",
+        "a": "We operate through a structured partnership model that combines strategy, execution, and follow-through, with a strong focus on service quality, operational clarity, and a premium client experience."
+      },
+      "item7": {
+        "q": "How do we know which service is right for our business?",
+        "a": "We begin by understanding the nature of your business, your goals, and your current situation, then determine whether the right fit is digital presence development, growth and acquisition support, or integrated growth management."
+      }
+    },
+    "cta": {
+      "h2": "Let's build a clearer growth system for your brand",
+      "body": "If your brand needs stronger visibility, better acquisition, and a more reliable monthly marketing partner, Navara is ready to help."
+    }
+  },
+
+  "about": {
+    "seo": {
+      "title": "About Navara | Integrated Growth Marketing Partner",
+      "description": "Navara is an integrated growth marketing partner for ambitious brands in Egypt and KSA."
+    },
+    "hero": {
+      "h1": "About Navara",
+      "body": "Navara is an integrated growth marketing partner for ambitious brands in Egypt and KSA, helping established businesses strengthen brand presence, customer acquisition, and long-term growth through structured execution and premium client experience."
+    },
+    "story": {
+      "h2": "Our Story",
+      "body": "Navara was built for brands that need more than disconnected marketing activity. We combine strategy, creative production, paid media support, and organized delivery into one operating model designed to protect both quality and growth."
+    },
+    "mission": {
+      "h3": "Our Mission",
+      "body": "To help established businesses grow through clearer strategy, stronger execution, and a premium client experience built on structure, quality, and accountability."
+    },
+    "vision": {
+      "h3": "Our Vision",
+      "body": "To become a trusted integrated growth partner for ambitious brands in Egypt and KSA, known for premium execution, operational clarity, and long-term client relationships."
+    },
+    "approach": {
+      "h2": "Our Approach",
+      "pillar1": {
+        "title": "Real business need first",
+        "body": "We build solutions around actual business challenges, not generic service packages."
+      },
+      "pillar2": {
+        "title": "Structured monthly delivery",
+        "body": "Our operating model is built for consistency, quality, and execution clarity every month."
+      },
+      "pillar3": {
+        "title": "Clear approvals and reporting",
+        "body": "Every deliverable has a defined approval flow and reporting cadence."
+      },
+      "pillar4": {
+        "title": "Controlled scope expansion",
+        "body": "We grow the scope purposefully, protecting quality as we scale."
+      },
+      "pillar5": {
+        "title": "Long-term partnership mindset",
+        "body": "We measure success over months and years, not single campaigns."
+      }
+    },
+    "markets": {
+      "h2": "Markets We Serve",
+      "egypt": {
+        "name": "Egypt",
+        "body": "Supporting ambitious Egyptian brands with structured digital growth, creative execution, and performance marketing."
+      },
+      "ksa": {
+        "name": "Saudi Arabia (KSA)",
+        "body": "Helping KSA brands strengthen their digital presence, improve acquisition, and operate with a clearer monthly marketing model."
+      }
+    },
+    "cta": {
+      "h2": "Ready to build a stronger brand presence?",
+      "body": ""
+    }
+  },
+
+  "services": {
+    "seo": {
+      "title": "Growth Marketing, Performance & Creative Services | Navara",
+      "description": "Navara provides integrated marketing services for ambitious brands in Egypt and KSA, brand presence, performance marketing, creative production, and more."
+    },
+    "hero": {
+      "h1": "Services built for growth, clarity, and execution quality",
+      "body": "Navara provides integrated marketing support for ambitious brands in Egypt and KSA. Our services are designed around real business need, stronger presence, better acquisition, and more structured growth execution."
+    },
+    "stage": {
+      "eyebrow": "Service stage",
+      "h2": "Tap a service and watch the growth system reconfigure"
+    },
+    "service1": {
+      "title": "Brand Presence Management",
+      "body": "For businesses that need stronger consistency, better presentation, and organized monthly content execution.",
+      "includes": "Social media content planning · Graphic design & creative · Monthly account management · Brand consistency oversight"
+    },
+    "service2": {
+      "title": "Performance Marketing",
+      "body": "For businesses focused on leads, bookings, inquiries, and acquisition performance.",
+      "includes": "Meta Ads management · Google Ads management · Campaign strategy & optimization · Performance reporting"
+    },
+    "service3": {
+      "title": "Integrated Growth Management",
+      "body": "For businesses that need one partner managing brand presence, creative production, paid media, and strategic review together.",
+      "includes": "Everything in Brand Presence + Performance, plus strategic monthly review and integrated planning."
+    },
+    "service4": {
+      "title": "Creative & Content Execution",
+      "body": "Visual content and creative assets that support commercial goals.",
+      "includes": "Graphic design · Motion design · Short-form video editing · Content planning & scheduling"
+    },
+    "service5": {
+      "title": "SEO & Organic Support",
+      "body": "SEO guidance, keyword direction, and search-oriented content support.",
+      "includes": "SEO audit & guidance · Keyword direction · Search-oriented content support · Visibility monitoring"
+    },
+    "service6": {
+      "title": "Extended Support (Add-ons)",
+      "body": "For businesses with additional or specialized needs.",
+      "includes": "Community management & messaging · Bilingual execution (Arabic/English) · Branch or additional brand support · Advanced reporting & dashboards · Additional creative production capacity"
+    },
+    "packages": {
+      "eyebrow": "Choose your growth path",
+      "h2": "Three ways to work with Navara",
+      "featuredBadge": "Most Complete",
+      "package1": {
+        "name": "Brand Presence",
+        "tagline": "Build authority and show up consistently across every touchpoint.",
+        "bestFor": "For businesses building their digital foundation",
+        "f1": "Social media content planning",
+        "f2": "Graphic design & creative assets",
+        "f3": "Monthly account management",
+        "f4": "Brand consistency oversight"
+      },
+      "package2": {
+        "name": "Demand Generation",
+        "tagline": "Turn attention into inbound leads, inquiries, and paying clients.",
+        "bestFor": "For businesses ready to scale acquisition",
+        "f1": "Meta & Google Ads management",
+        "f2": "Campaign strategy & optimization",
+        "f3": "Performance reporting",
+        "f4": "SEO & organic visibility support"
+      },
+      "package3": {
+        "name": "Growth Partner 360",
+        "tagline": "One partner. Every growth lever. Fully integrated and strategically led.",
+        "bestFor": "For ambitious brands that want the full system",
+        "f1": "Everything in Brand Presence",
+        "f2": "Everything in Demand Generation",
+        "f3": "Monthly strategic review",
+        "f4": "Integrated planning & reporting"
+      }
+    },
+    "philosophy": {
+      "note": "We do not list fixed packages or public pricing. After understanding your business, goals, and current setup, we recommend the right structure and define a clear scope tailored to your needs."
+    },
+    "cta": {
+      "h2": "Need the right service mix for your business?",
+      "body": ""
+    }
+  },
+
+  "industries": {
+    "seo": {
+      "title": "Industries We Serve | Navara, Egypt & KSA",
+      "description": "Navara works with established brands in healthcare, ecommerce, real estate, automotive, and more across Egypt and KSA."
+    },
+    "hero": {
+      "h1": "Built for ambitious brands in high-opportunity sectors",
+      "body": "Navara focuses on established businesses in Egypt and KSA, especially brands that need stronger presence, better acquisition, and a more reliable monthly operating partner."
+    },
+    "industry1": {
+      "title": "Healthcare",
+      "body": "Support clinics, centers, and healthcare brands that need trust-building content, stronger visibility, and clearer lead generation. Hospitals, clinics, medical centers, and laboratories."
+    },
+    "industry2": {
+      "title": "Ecommerce",
+      "body": "Help growing stores and online brands improve acquisition, content execution, and coordinated growth activity."
+    },
+    "industry3": {
+      "title": "Recurring Service Businesses",
+      "body": "Support businesses built on recurring demand that need better visibility, local relevance, and more consistent lead flow."
+    },
+    "industry4": {
+      "title": "Real Estate",
+      "body": "Development, brokerage, and real estate investment, stronger digital presence and lead generation."
+    },
+    "industry5": {
+      "title": "Automotive",
+      "body": "Car dealerships, auto-related businesses, and spare parts, visibility and acquisition support."
+    },
+    "industry6": {
+      "title": "Specialized Retail",
+      "body": "Specialized stores and niche retail businesses that need structured content and campaign execution."
+    },
+    "industry7": {
+      "title": "Multi-Branch Brands",
+      "body": "Serve brands that need clearer coordination, approvals, and structured growth across branches or business units. Chains and organizations operating across multiple locations."
+    },
+    "marketFocus": {
+      "h2": "Our Market Focus",
+      "egypt": "Egypt",
+      "ksa": "Saudi Arabia (KSA)",
+      "egyptBody": "Serving ambitious Egyptian brands across Cairo, Alexandria, and beyond.",
+      "ksaBody": "Supporting KSA brands in Riyadh, Jeddah, and growing digital markets."
+    },
+    "cta": {
+      "h2": "Tell us about your brand",
+      "body": ""
+    }
+  },
+
+  "howWeWork": {
+    "seo": {
+      "title": "How Navara Works | Structured Marketing Process",
+      "description": "Navara's 5-step process: Discovery, Recommendation, Planning, Execution, and Optimization, built for clarity and quality."
+    },
+    "hero": {
+      "h1": "How Navara works",
+      "body": "Our work is built around clarity, accountability, and a monthly operating rhythm that protects both quality and progress."
+    },
+    "process": {
+      "h2": "Our 5-Step Process",
+      "step1": {
+        "number": "01",
+        "title": "Discovery",
+        "body": "We understand the brand, commercial priorities, channels, current setup, and operating maturity before recommending the right scope."
+      },
+      "step2": {
+        "number": "02",
+        "title": "Recommendation",
+        "body": "We structure the work around the real need: stronger brand presence, better acquisition, or a more integrated growth model."
+      },
+      "step3": {
+        "number": "03",
+        "title": "Planning",
+        "body": "We build the monthly plan, define priorities, confirm workflows, and align on approvals and reporting."
+      },
+      "step4": {
+        "number": "04",
+        "title": "Execution",
+        "body": "We deliver content, campaigns, creative production, and account coordination through a controlled monthly process."
+      },
+      "step5": {
+        "number": "05",
+        "title": "Review & Optimization",
+        "body": "We review results, identify next priorities, and refine the next cycle with better clarity."
+      }
+    },
+    "benefits": {
+      "h2": "What This Means for Clients",
+      "clarity": {
+        "title": "Clarity",
+        "body": "You always know what is being done, when, and why."
+      },
+      "accountability": {
+        "title": "Accountability",
+        "body": "Every month has a plan, deliverables, and a review."
+      },
+      "quality": {
+        "title": "Quality Control",
+        "body": "Defined scope and approval flows protect the output."
+      }
+    },
+    "closing": "A structured process protects execution quality, communication clarity, and delivery timelines.",
+    "cta": {
+      "h2": "Ready to start a structured growth partnership?",
+      "body": ""
+    }
+  },
+
+  "contact": {
+    "seo": {
+      "title": "Book a Call with Navara | Egypt & KSA",
+      "description": "Book a call or send an inquiry to Navara, integrated growth marketing partner for ambitious brands in Egypt and KSA."
+    },
+    "hero": {
+      "h1": "Let's talk about your next stage of growth",
+      "body": "Whether your priority is stronger brand presence, better acquisition, or a more integrated monthly marketing partner, Navara is ready to understand your business and recommend the right direction."
+    },
+    "info": {
+      "h2": "Get in Touch",
+      "body": "Whether you're ready to start your journey or just have questions, we're here to help guide you with clarity.",
+      "email1": "hello@navara.com",
+      "email2": "info@navara.com",
+      "whatsapp": "Chat with us on WhatsApp",
+      "office": "Cairo, Egypt · Riyadh, KSA",
+      "hours": "Mon–Fri: 9:00 AM – 6:00 PM",
+      "expectation": "We review each inquiry based on business need, scope clarity, and fit with our operating model."
+    },
+    "form": {
+      "title": "Tell us about your business",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "businessName": "Business / Company",
+      "businessNamePlaceholder": "Your business or company name",
+      "market": "Market",
+      "marketPlaceholder": "Select your market",
+      "marketOptions": {
+        "egypt": "Egypt",
+        "ksa": "Saudi Arabia (KSA)",
+        "both": "Both",
+        "other": "Other"
+      },
+      "industry": "Industry (optional)",
+      "industryPlaceholder": "Select your industry",
+      "industryOptions": {
+        "healthcare": "Healthcare",
+        "ecommerce": "Ecommerce",
+        "servicesBusiness": "Service Business",
+        "realEstate": "Real Estate",
+        "automotive": "Automotive",
+        "retail": "Retail",
+        "multiBranch": "Multi-Branch",
+        "other": "Other"
+      },
+      "primaryGoal": "Primary Goal (optional)",
+      "primaryGoalPlaceholder": "What's your main priority?",
+      "primaryGoalOptions": {
+        "presence": "Build a strong digital presence that positions me as an authority in my market",
+        "leads": "Get more leads & clients to scale my business",
+        "both": "Do both — grow presence AND leads, as fast as possible",
+        "notSure": "Not sure yet"
+      },
+      "servicesOfInterest": "Services of Interest (optional)",
+      "servicesOptions": {
+        "brandPresence": "Brand Presence",
+        "demandGeneration": "Demand Generation",
+        "growthPartner360": "Growth Partner 360"
+      },
+      "budgetRange": "Monthly Budget Range (optional)",
+      "budgetPlaceholder": "Select a range",
+      "budgetOptions": {
+        "under1k": "Under $1,000",
+        "1kTo3k": "$1,000–$3,000",
+        "3kTo6k": "$3,000–$6,000",
+        "6kPlus": "$6,000+",
+        "preferNot": "Prefer not to say"
+      },
+      "whatsapp": "WhatsApp Number",
+      "whatsappPlaceholder": "+20 1XX XXX XXXX",
+      "email": "Email Address (optional)",
+      "emailPlaceholder": "your@email.com",
+      "preferredDate": "Pick your preferred call date",
+      "today": "Today",
+      "briefNote": "Brief Note (optional)",
+      "briefNotePlaceholder": "Tell us about your business and goals...",
+      "submit": "Book Your Free Consultation Call",
+      "submitting": "Booking..."
+    },
+    "success": "Thank you! We'll review your inquiry and be in touch shortly.",
+    "error": "Something went wrong. Please try again or reach us via WhatsApp.",
+    "validation": {
+      "fullNameRequired": "Full name is required",
+      "businessNameRequired": "Business name is required",
+      "marketRequired": "Please select your market",
+      "whatsappRequired": "WhatsApp number is required",
+      "emailInvalid": "Please enter a valid email address"
+    }
+  },
+
+  "industries_chips": {
+    "medical": "Medical",
+    "ecommerce": "Ecommerce",
+    "serviceBusinesses": "Service Businesses",
+    "multiBranch": "Established Multi-branch Brands",
+    "realEstate": "Real Estate",
+    "automotive": "Automotive"
+  },
+
+  "homeV2": {
+    "hero": {
+      "eyebrow": "For Ecommerce & Service Businesses in Egypt & Saudi Arabia",
+      "h1": "Turn Your Marketing Spend Into\n+30% More Revenue in 90 Days with our\nCompletely Done-For-You Growth System",
+      "h1Intro": "Turn Your Marketing Spend Into",
+      "h1Accent": "+30% More Revenue",
+      "h1Mid": "in 90 Days",
+      "h1Outro": "with our Completely Done-For-You Growth System",
+      "subheadline": "More orders, more customers, more revenue, without risking your budget or time on guesswork",
+      "subItem1": "More orders",
+      "subItem2": "More customers",
+      "subItem3": "More revenue",
+      "subNote": "without risking your budget or time on guesswork",
+      "cta": "Book a free consultation call",
+      "ctaSubtext": "We'll show you exactly what's holding your growth back"
+    },
+    "logos": {
+      "heading": "Trusted by"
+    },
+    "whoWeAre": {
+      "sectionHeading": "Who are we?",
+      "mainHeadline": "The Marketing Partner That Grows Your Business\nNot Just Your Engagement numbers",
+      "blocks": [
+        {
+          "title": "We don't \"run your ads,\" we build your growth system",
+          "body": "Every creative, every campaign, every strategy decision connects back to one goal: More customers, more revenue. Not more impressions on a report."
+        },
+        {
+          "title": "You get one partner who sees the whole picture",
+          "body": "Not a content team, a media buyer, and an account manager who never talk to each other. One Project Manager. One unified strategy. Every part of your marketing working as one system."
+        },
+        {
+          "title": "We don't start with execution, we start with diagnosis",
+          "body": "Before we build anything, we map exactly where your growth is stuck and why. Then we build the system that fixes it specific to your business, not copy-pasted from someone else's."
+        },
+        {
+          "title": "We only win when you win",
+          "body": "No long contracts that trap you. No vague KPIs. One clear revenue target, agreed on day one, and we work until we hit it."
+        }
+      ]
+    },
+    "services": {
+      "eyebrow": "Our Services",
+      "cardCta": "Get started",
+      "sectionHeading": "Three Ways We Grow Your Revenue",
+      "cards": [
+        {
+          "title": "Brand Presence",
+          "tagline": "Build brand equity that earns trust before the first ad.",
+          "body": "For businesses building a brand that earns trust before the sale. Monthly content strategy, design, motion, and social presence, planned around your business goals and delivered consistently, every single month."
+        },
+        {
+          "title": "Demand Generation",
+          "tagline": "Paying customers in 14 days. No fluff, only results.",
+          "body": "For businesses that need paying customers immediately. Meta and Google campaigns built around your offer, launched in 14 days, optimized weekly until the numbers move. Strategy, creative coordination, and performance reporting, all handled."
+        },
+        {
+          "title": "Growth Partner 360",
+          "tagline": "Brand, content, ads: one team, one target, zero silos.",
+          "body": "For businesses that want everything running as one system. Brand, content, paid ads, and strategy, managed by one team, coordinated by one PM, accountable to one revenue target. This is the full partnership."
+        }
+      ],
+      "ctaText": "Still can't decide? Let's chat and help you pick",
+      "ctaButton": "Book a free consultation call"
+    },
+    "process": {
+      "sectionHeading": "From First Call to First Results",
+      "sectionSubheading": "Here's Exactly What Happens…",
+      "steps": [
+        {
+          "title": "Discovery",
+          "description": "We start with your business not your ad account. Where you are, where you want to go, and what's actually blocking your growth right now."
+        },
+        {
+          "title": "Recommendation",
+          "description": "We tell you exactly which package fits your situation and why. No upselling. No guesswork. Just the right system for where you are."
+        },
+        {
+          "title": "Planning",
+          "description": "Your full growth plan, built, reviewed, and approved before anything goes live. You see every move before it's made."
+        },
+        {
+          "title": "Execution",
+          "description": "We execute. You run your business. Campaigns go live, content ships, and your PM keeps everything moving, full visibility the entire way."
+        },
+        {
+          "title": "Reporting & Optimization",
+          "description": "Every month we review what worked, what didn't, and what gets sharper next cycle. The system compounds. Results improve."
+        }
+      ],
+      "ctaButton": "Book a free consultation call"
+    },
+    "testimonials": {
+      "sectionHeading": "This Is What Growth Looks Like",
+      "sectionSubheading": "What Our Clients Actually Say",
+      "ratingLabel": "from our clients",
+      "videoComing": "Video coming soon",
+      "items": [
+        {
+          "id": "tp1",
+          "clientName": "Sarah Ahmed",
+          "clientTitle": "E-commerce Owner",
+          "quote": "Navara helped us grow our online store revenue by 40% in just 3 months.",
+          "resultsBadge": "+40% Revenue"
+        },
+        {
+          "id": "tp2",
+          "clientName": "Mohammed Al-Rashid",
+          "clientTitle": "Marketing Director",
+          "quote": "The integrated growth system gave us clarity on exactly where to invest our budget.",
+          "resultsBadge": null
+        },
+        {
+          "id": "tp3",
+          "clientName": "Fatima Hassan",
+          "clientTitle": "Founder, Beauty Brand",
+          "quote": "Professional, results-driven, and always accountable. Best agency we have worked with.",
+          "resultsBadge": null
+        },
+        {
+          "id": "tp4",
+          "clientName": "Khalid Al-Mansouri",
+          "clientTitle": "CEO, Real Estate Developer",
+          "quote": "From zero digital presence to 200+ qualified leads a month. The Navara team delivered beyond expectations.",
+          "resultsBadge": "200+ Leads/mo"
+        }
+      ]
+    },
+    "riskReversal": {
+      "sectionHeading": "The Risk Is Ours, The Growth Is Yours",
+      "primary": {
+        "para1": "We'll map exactly where your business is leaking revenue and build your growth plan on the spot.",
+        "para2": "Keep the plan. Use it yourself if you want. No commitment, no pressure, no awkward follow-up.",
+        "para3": "Walk away whenever you want, no questions asked.",
+        "cta": "Book a free consultation call"
+      },
+      "guarantee": {
+        "heading": "And to make it even safer for you",
+        "condition": "If you work with us and don't see measurable revenue growth within 90 days",
+        "promise": "We work an additional month completely free until you hit your goals. No clauses. No fine print. We don't stop until the system works.",
+        "tagline": "We only make money when you grow. That's not a slogan, it's how we operate.",
+        "badge": "90-Day Guarantee"
+      }
+    },
+    "faq": {
+      "sectionHeading": "Frequently Asked Questions"
+    }
+  }
+}
