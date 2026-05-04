@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.local
+.env.production
+coverage/
+*.log
+.DS_Store
+Thumbs.db
+
+# .env.test IS committed — it holds test-only placeholders (the bcrypt hash is for
+# "test-password-123" and the JWT secret has "test" in its value). Jest needs these
+# present in CI to run the contract tests without the user setting env vars manually.
+!.env.test
