@@ -42,4 +42,20 @@ router.post('/login', loginLimiter, async (req, res, next) => {
   }
 });
 
+// TEMP — diagnose env-var mangling on Hostinger. Returns ONLY safe metadata about
+// what the server loaded (no plaintext secrets). DELETE this route once login works.
+router.get('/_debug', (_req, res) => {
+  const u = process.env.ADMIN_USERNAME || '';
+  const h = process.env.ADMIN_PASSWORD_HASH || '';
+  const j = process.env.JWT_SECRET || '';
+  res.json({
+    adminUsername: u,                                  // safe to show
+    adminHashLength: h.length,                         // expect 60
+    adminHashPrefix: h.slice(0, 7),                    // expect "$2b$12$"
+    adminHashStartsWithDollar: h.startsWith('$'),      // expect true
+    jwtSecretLength: j.length,                         // expect 64+
+    nodeEnv: process.env.NODE_ENV || null,
+  });
+});
+
 module.exports = router;
