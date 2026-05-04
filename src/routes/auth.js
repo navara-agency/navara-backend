@@ -5,6 +5,20 @@ const rateLimit = require('express-rate-limit');
 
 const router = express.Router();
 
+// Hostinger's env-var input mangles bcrypt hashes (inserts literal backslashes before
+// every `$`). Workaround: accept the hash base64-encoded via ADMIN_PASSWORD_HASH_B64,
+// which contains no shell-special characters. If both are set, _B64 wins.
+function loadAdminHash() {
+  const b64 = process.env.ADMIN_PASSWORD_HASH_B64;
+  if (b64 && b64.trim()) {
+    try {
+      const decoded = Buffer.from(b64.trim(), 'base64').toString('utf8');
+      if (decoded.startsWith('$2')) return decoded;
+    } catch { /* fall through to plain */ }
+  }
+  return process.env.ADMIN_PASSWORD_HASH || '';
+}
+
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
@@ -21,7 +35,7 @@ router.post('/login', loginLimiter, async (req, res, next) => {
     }
 
     const expectedUser = process.env.ADMIN_USERNAME;
-    const expectedHash = process.env.ADMIN_PASSWORD_HASH;
+    const expectedHash = loadAdminHash();
     if (!expectedUser || !expectedHash) {
       return res.status(500).json({ error: 'Auth not configured' });
     }
@@ -46,14 +60,19 @@ router.post('/login', loginLimiter, async (req, res, next) => {
 // what the server loaded (no plaintext secrets). DELETE this route once login works.
 router.get('/_debug', (_req, res) => {
   const u = process.env.ADMIN_USERNAME || '';
-  const h = process.env.ADMIN_PASSWORD_HASH || '';
+  const plain = process.env.ADMIN_PASSWORD_HASH || '';
+  const b64 = process.env.ADMIN_PASSWORD_HASH_B64 || '';
+  const resolved = loadAdminHash();
   const j = process.env.JWT_SECRET || '';
   res.json({
-    adminUsername: u,                                  // safe to show
-    adminHashLength: h.length,                         // expect 60
-    adminHashPrefix: h.slice(0, 7),                    // expect "$2b$12$"
-    adminHashStartsWithDollar: h.startsWith('$'),      // expect true
-    jwtSecretLength: j.length,                         // expect 64+
+    adminUsername: u,
+    adminPlainHashLength: plain.length,
+    adminB64HashLength: b64.length,
+    resolvedHashLength: resolved.length,                 // expect 60
+    resolvedHashPrefix: resolved.slice(0, 7),            // expect "$2b$12$" or "$2a$10$"
+    resolvedHashStartsWithDollar: resolved.startsWith('$'),
+    usingBase64Source: !!(b64 && b64.trim() && resolved.startsWith('$2')),
+    jwtSecretLength: j.length,                           // expect 64+
     nodeEnv: process.env.NODE_ENV || null,
   });
 });
