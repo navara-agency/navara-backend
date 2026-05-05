@@ -20,8 +20,12 @@ const calcomRoutes = require('./routes/calcom');
 function createApp() {
   const app = express();
 
-  // R14 — trust the first proxy hop (Hostinger reverse proxy)
-  app.set('trust proxy', 1);
+  // R14 — trust the proxy chain so req.ip reflects the real visitor IP, not the
+  // load-balancer's. Hostinger Cloud has 2+ hops (edge → LB → container), so trusting
+  // only `1` strips the X-Forwarded-For header before we can read it. Trusting `true`
+  // walks the whole chain. Trade-off: X-Forwarded-For becomes spoofable, which is
+  // acceptable for a marketing-site backend (no IP-based admin auth).
+  app.set('trust proxy', true);
 
   app.use(express.json({ limit: '1mb' }));
   app.use(

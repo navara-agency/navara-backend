@@ -37,10 +37,11 @@ router.get('/', async (req, res, next) => {
     }
 
     const ip = resolveIp(req);
-    const skipCache = process.env.NODE_ENV !== 'production' && req.query.nocache === '1';
+    const skipCache = (process.env.NODE_ENV !== 'production' && req.query.nocache === '1') || req.query.debug === '1';
     const lookup = await geoService.lookupMarket(ip, { skipCache });
     const cfg = await getReshaped();
     const block = lookup.market === 'KSA' ? cfg?.ksa : cfg?.eg;
+    const wantDebug = req.query.debug === '1' || process.env.NODE_ENV !== 'production';
     return res.json({
       market: lookup.market,
       config: {
@@ -51,12 +52,17 @@ router.get('/', async (req, res, next) => {
         ctaSubtext: block?.ctaSubtext || null,
         calLink: block?.calLink || null,
       },
-      // Dev-only diagnostics — production clients should ignore these.
-      ...(process.env.NODE_ENV !== 'production' ? {
+      // Diagnostics — visible when ?debug=1 OR NODE_ENV !== production.
+      // The visitor's own IP is not a secret to them, so this is safe to expose.
+      ...(wantDebug ? {
         debug: {
-          ip,
+          reqIp: ip,
+          xForwardedFor: req.headers['x-forwarded-for'] || null,
+          xRealIp: req.headers['x-real-ip'] || null,
+          cfConnectingIp: req.headers['cf-connecting-ip'] || null,
           countryCode: lookup.countryCode || null,
           country: lookup.country || null,
+          resolvedIp: lookup.resolvedIp || null,
           cached: !!lookup.cached,
           reason: lookup.reason || null,
         },
