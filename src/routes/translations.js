@@ -1,5 +1,8 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const { requireAuth } = require('../middleware/auth');
+const logger = require('../config/logger');
 const { getTranslations, mergeTranslations, replaceTranslations } = require('../services/translations');
 
 const router = express.Router();
@@ -34,7 +37,7 @@ router.put('/:lang', requireAuth, async (req, res, next) => {
   }
 });
 
-// One-shot seed endpoint (gated by env flag)
+// One-shot seed endpoint (gated by env flag) — accepts JSON in the request body
 router.post('/seed', requireAuth, async (req, res, next) => {
   try {
     if (process.env.ALLOW_TRANSLATION_SEED !== 'true') {
@@ -48,6 +51,38 @@ router.post('/seed', requireAuth, async (req, res, next) => {
       await replaceTranslations('ar', ar);
     }
     return res.json({ success: true });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// Disaster-recovery: restore en + ar from the bundled JSON files in
+// src/scripts/locales/. Use this after a corrupted save (e.g., the
+// character-indexed object bug) has wiped real content.
+// Admin auth required + ALLOW_TRANSLATION_SEED=true gate so this can't be
+// triggered accidentally.
+router.post('/restore-from-bundled', requireAuth, async (_req, res, next) => {
+  try {
+    if (process.env.ALLOW_TRANSLATION_SEED !== 'true') {
+      return res.status(403).json({ error: 'Set ALLOW_TRANSLATION_SEED=true to enable restore' });
+    }
+    const localesDir = path.join(__dirname, '..', 'scripts', 'locales');
+    const enPath = path.join(localesDir, 'en.json');
+    const arPath = path.join(localesDir, 'ar.json');
+
+    const restored = {};
+    if (fs.existsSync(enPath)) {
+      const en = JSON.parse(fs.readFileSync(enPath, 'utf8'));
+      await replaceTranslations('en', en);
+      restored.en = Object.keys(en).length;
+    }
+    if (fs.existsSync(arPath)) {
+      const ar = JSON.parse(fs.readFileSync(arPath, 'utf8'));
+      await replaceTranslations('ar', ar);
+      restored.ar = Object.keys(ar).length;
+    }
+    logger.info({ restored }, 'translations restored from bundled JSON');
+    return res.json({ success: true, restored });
   } catch (err) {
     return next(err);
   }
