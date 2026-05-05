@@ -27,15 +27,30 @@ function createApp() {
   // acceptable for a marketing-site backend (no IP-based admin auth).
   app.set('trust proxy', true);
 
-  app.use(express.json({ limit: '1mb' }));
+  // CORS first, before the body parser. If the body parser rejects an oversize payload
+  // it short-circuits with a 413 — and unless CORS already ran, the browser sees the
+  // 413 as a CORS error because the response is missing Access-Control-Allow-Origin.
+  // Allow comma-separated multiple origins so navaraagency.com + www. + custom domains
+  // can all be whitelisted via one env var.
+  const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173')
+    .split(',').map((o) => o.trim()).filter(Boolean);
   app.use(
     cors({
-      origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
+      origin: (origin, cb) => {
+        // Allow same-origin / curl / server-to-server (no Origin header)
+        if (!origin) return cb(null, true);
+        if (allowedOrigins.includes(origin)) return cb(null, true);
+        return cb(new Error(`CORS: origin ${origin} not allowed`));
+      },
       credentials: false,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     })
   );
+
+  // Translation trees are large JSON blobs (~30-40 KB per language but can grow).
+  // Bumped from 1mb to 5mb so PUT /api/translations/:lang works for full-tree saves.
+  app.use(express.json({ limit: '5mb' }));
 
   // Health check — pings DB and reports which integrations have credentials configured.
   // Useful for uptime monitoring and post-deploy smoke checks. Never reveals secret values.
