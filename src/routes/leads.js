@@ -61,7 +61,7 @@ router.post('/', submitLimiter, async (req, res, next) => {
 
     const data = sanitiseLeadInput(req.body);
 
-    if (!data.name || !data.company || !data.industry || !data.market || !data.email) {
+    if (!data.name || !data.company || !data.market || !data.phone || !data.email) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     if (!VALID_MARKETS.includes(data.market)) {
