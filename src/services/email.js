@@ -145,10 +145,75 @@ async function sendBookingConfirmation(lead, booking, timezone) {
   });
 }
 
+/**
+ * Sends a "your call starts soon" reminder to the visitor (To) and CCs the admin.
+ * Run by the reminder queue ~2 hours before the meeting (or ASAP if the meeting is closer).
+ * Distinct from sendBookingConfirmation, which announces an initial confirmation.
+ *
+ * @param {object} lead     Persisted Lead row (needs email + name)
+ * @param {object} booking  Cal.com booking — uses .start, .end, .meetingUrl, .uid
+ * @param {string} [timezone] IANA timezone for rendering
+ */
+async function sendBookingReminder(lead, booking, timezone) {
+  if (!lead?.email) throw new Error('lead.email required');
+  if (!booking) throw new Error('booking required');
+
+  const { transport, fromName, fromEmail, notifyEmail } = await getTransport();
+
+  const start = booking.start || booking.startTime || null;
+  const end = booking.end || booking.endTime || null;
+  const meetingUrl = booking.meetingUrl || booking.location || null;
+  const reschedule = booking.rescheduleUid
+    ? `https://cal.com/reschedule/${booking.rescheduleUid}`
+    : (booking.uid ? `https://cal.com/booking/${booking.uid}` : null);
+
+  const startPretty = formatStartTime(start, timezone);
+
+  // How long until the call (rounded to nearest minute) — drives the subject line wording
+  // for both the 2h-ahead case and the "we just booked you in <30min" edge case.
+  let minutesUntil = null;
+  if (start) {
+    minutesUntil = Math.max(0, Math.round((new Date(start).getTime() - Date.now()) / 60000));
+  }
+  const subject =
+    minutesUntil != null && minutesUntil <= 5
+      ? `Your call with ${fromName} is starting now`
+      : minutesUntil != null && minutesUntil < 120
+      ? `Reminder: your call with ${fromName} starts in ${minutesUntil} min`
+      : `Reminder: your call with ${fromName} starts in 2 hours`;
+
+  const lines = [
+    `Hi ${lead.name},`,
+    '',
+    `Quick reminder — your discovery call with ${fromName} is coming up:`,
+    '',
+    startPretty ? `📅  ${startPretty}` : null,
+    end && start ? `⏱   ${Math.round((new Date(end) - new Date(start)) / 60000)} minutes` : null,
+    meetingUrl ? `🔗  ${meetingUrl}` : null,
+    '',
+    `We recommend joining a couple of minutes early to test your audio.`,
+    reschedule ? `Need to reschedule? ${reschedule}` : null,
+    '',
+    `If something has come up, just reply to this email and we'll work it out.`,
+    '',
+    `— ${fromName}`,
+  ].filter(Boolean).join('\n');
+
+  await transport.sendMail({
+    from: `"${fromName}" <${fromEmail}>`,
+    to: lead.email,
+    cc: notifyEmail || undefined,
+    replyTo: notifyEmail || fromEmail,
+    subject,
+    text: lines,
+  });
+}
+
 module.exports = {
   getTransport,
   sendLeadNotification,
   sendTestEmail,
   sendBookingConfirmation,
+  sendBookingReminder,
   formatLeadBody,
 };

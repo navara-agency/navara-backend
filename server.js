@@ -4,6 +4,7 @@ const { createApp } = require('./src/app');
 const { authenticate, sequelize } = require('./src/config/db');
 const logger = require('./src/config/logger');
 require('./src/models'); // register all models
+const reminderQueue = require('./src/services/reminderQueue');
 
 const PORT = Number(process.env.PORT) || 3001;
 
@@ -34,6 +35,11 @@ async function start() {
     app.listen(PORT, () => {
       logger.info(`Listening on http://localhost:${PORT}`);
     });
+
+    // Booking-reminder queue. Disabled with EMAIL_BOOKING_REMINDERS=false (e.g., for tests).
+    if (process.env.EMAIL_BOOKING_REMINDERS !== 'false') {
+      reminderQueue.start();
+    }
   } catch (err) {
     logger.error({ err }, 'Failed to start server');
     process.exit(1);

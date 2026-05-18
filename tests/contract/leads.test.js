@@ -6,14 +6,17 @@ const { signTestToken, expiredToken, bearer } = require('../helpers/auth');
 jest.mock('../../src/services/email', () => ({
   sendLeadNotification: jest.fn().mockResolvedValue(undefined),
   sendTestEmail: jest.fn().mockResolvedValue(undefined),
+  sendBookingConfirmation: jest.fn().mockResolvedValue(undefined),
+  sendBookingReminder: jest.fn().mockResolvedValue(undefined),
   getTransport: jest.fn(),
   formatLeadBody: jest.requireActual('../../src/services/email').formatLeadBody,
 }));
 
+// Market is now derived from the phone's country code on the server (no more `market` field
+// in the payload). preferredDateTime is required because the form forces a time pick.
 const VALID_LEAD = {
   name: 'Aisha Ali',
   company: 'Acme Co',
-  market: 'Egypt',
   industry: 'Retail',
   goal: 'Generate qualified leads',
   services: ['Social Media', 'SEO'],
@@ -21,6 +24,8 @@ const VALID_LEAD = {
   phone: '+201000000000',
   email: 'aisha@acme.test',
   note: 'Looking forward to working together.',
+  preferredDateTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  timezone: 'Africa/Cairo',
 };
 
 describe('Leads endpoints', () => {

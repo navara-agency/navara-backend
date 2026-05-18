@@ -3,11 +3,22 @@ const validator = require('validator');
 const rateLimit = require('express-rate-limit');
 
 const { requireAuth } = require('../middleware/auth');
-const { sendLeadNotification, sendBookingConfirmation } = require('../services/email');
+const { sendLeadNotification } = require('../services/email');
 const { createBooking } = require('../services/calcom');
+const { scheduleReminder } = require('../services/reminderQueue');
 const logger = require('../config/logger');
 
 const router = express.Router();
+
+// Phone country code → internal market ENUM. We no longer ask the visitor for their market;
+// the phone's dial code is the source of truth. Anything else falls back to 'Other'.
+function deriveMarketFromPhone(phone) {
+  if (!phone) return 'Other';
+  const s = String(phone).replace(/\s+/g, '');
+  if (s.startsWith('+20')) return 'Egypt';
+  if (s.startsWith('+966')) return 'KSA';
+  return 'Other';
+}
 
 const submitLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
@@ -21,15 +32,17 @@ const VALID_MARKETS = ['Egypt', 'KSA', 'Other'];
 const VALID_STATUSES = ['new', 'reviewed', 'contacted', 'closed'];
 
 function sanitiseLeadInput(body = {}) {
+  const phone = typeof body.phone === 'string' ? body.phone.trim() : null;
   return {
     name: typeof body.name === 'string' ? body.name.trim() : '',
     company: typeof body.company === 'string' ? body.company.trim() : '',
-    market: typeof body.market === 'string' ? body.market : '',
+    // Market is derived from the phone country code — visitors no longer pick it.
+    market: deriveMarketFromPhone(phone),
     industry: typeof body.industry === 'string' ? body.industry.trim() : '',
-    goal: typeof body.goal === 'string' ? body.goal.trim() : null,
+    goal: typeof body.goal === 'string' ? body.goal.trim() : '',
     services: Array.isArray(body.services) ? body.services.filter((s) => typeof s === 'string') : null,
-    budget: typeof body.budget === 'string' ? body.budget.trim() : null,
-    phone: typeof body.phone === 'string' ? body.phone.trim() : null,
+    budget: typeof body.budget === 'string' ? body.budget.trim() : '',
+    phone,
     email: typeof body.email === 'string' ? body.email.trim() : '',
     note: typeof body.note === 'string' ? body.note : null,
   };
@@ -60,8 +73,12 @@ router.post('/', submitLimiter, async (req, res, next) => {
     }
 
     const data = sanitiseLeadInput(req.body);
+    const { preferredDateTime, timezone } = pickBookingInputs(req.body);
 
-    if (!data.name || !data.company || !data.market || !data.phone || !data.email) {
+    // Required fields — only `services` and `note` are optional now. `market` is derived
+    // from the phone, so it doesn't need to be in this list.
+    if (!data.name || !data.company || !data.industry || !data.goal || !data.budget
+        || !data.phone || !data.email || !preferredDateTime) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     if (!VALID_MARKETS.includes(data.market)) {
@@ -81,10 +98,9 @@ router.post('/', submitLimiter, async (req, res, next) => {
       logger.error({ err: err.message, lead: { id: lead.id } }, 'lead notification email failed');
     }
 
-    // Auto-create the Cal.com booking when the visitor picked a date+time.
+    // Auto-create the Cal.com booking — visitor already picked a date+time (now required).
     // Booking failure must NOT block lead capture either — log and move on so the lead is safe.
     let booking = null;
-    const { preferredDateTime, timezone } = pickBookingInputs(req.body);
     if (preferredDateTime) {
       try {
         const result = await createBooking({
@@ -104,15 +120,15 @@ router.post('/', submitLimiter, async (req, res, next) => {
             status: 'confirmed',
           };
 
-          // Send our own confirmation email from configured SMTP, in addition to or instead of Cal.com's.
-          // Gated by env flag:
-          //   EMAIL_BOOKING_CONFIRMATIONS=true   → our SMTP sends confirmation to visitor (cc admin)
-          //   EMAIL_BOOKING_CONFIRMATIONS unset  → only Cal.com emails (default)
-          if (process.env.EMAIL_BOOKING_CONFIRMATIONS === 'true') {
+          // Schedule our own SMTP reminder to land 2 hours before the meeting.
+          // - Cal.com still sends its own immediate confirmation email (untouched).
+          // - If the meeting is <2h away, the reminder queue sends ASAP on the next tick.
+          // Gated by env flag so deployments can opt out without code changes.
+          if (process.env.EMAIL_BOOKING_REMINDERS !== 'false') {
             try {
-              await sendBookingConfirmation(lead, result.booking, timezone);
+              await scheduleReminder({ lead, booking: result.booking, timezone });
             } catch (err) {
-              logger.warn({ err: err.message, lead: { id: lead.id } }, 'booking confirmation email failed');
+              logger.warn({ err: err.message, lead: { id: lead.id } }, 'scheduling booking reminder failed');
             }
           }
         } else if (!result.skipped) {
