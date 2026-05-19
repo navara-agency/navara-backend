@@ -3,12 +3,19 @@ const validator = require('validator');
 const rateLimit = require('express-rate-limit');
 
 const { requireAuth } = require('../middleware/auth');
-const { sendLeadNotification } = require('../services/email');
+const { sendLeadNotification, sendBookingConfirmation } = require('../services/email');
 const { createBooking } = require('../services/calcom');
 const { scheduleReminder } = require('../services/reminderQueue');
 const logger = require('../config/logger');
 
 const router = express.Router();
+
+// Cal.com sends a non-suppressible confirmation + reminder to whichever attendee email
+// we hand its API. To stop those reaching the visitor (we send our own branded SMTP emails
+// instead), we book Cal.com with a fake address on a domain we control. The real visitor
+// email stays in our leads table and is what our SMTP confirmation/reminder targets.
+// Override via env if needed.
+const CAL_FAKE_ATTENDEE_EMAIL = process.env.CAL_FAKE_ATTENDEE_EMAIL || 'bookings@navaraagency.com';
 
 // Phone country code → internal market ENUM. We no longer ask the visitor for their market;
 // the phone's dial code is the source of truth. Anything else falls back to 'Other'.
@@ -103,14 +110,18 @@ router.post('/', submitLimiter, async (req, res, next) => {
     let booking = null;
     if (preferredDateTime) {
       try {
+        // Pass the FAKE attendee email so Cal.com doesn't email the visitor. The visitor's
+        // real email is still in `lead.email` and is used by our SMTP confirmation +
+        // reminder. Including the real email in `notes` keeps it visible in the Cal.com
+        // booking record so we can still reconcile when reviewing bookings on cal.com.
         const result = await createBooking({
           startIso: preferredDateTime,
           name: data.name,
-          email: data.email,
+          email: CAL_FAKE_ATTENDEE_EMAIL,
           phone: data.phone,
           market: data.market,
           timezone: timezone,
-          notes: data.note,
+          notes: [data.note, `Visitor email: ${data.email}`].filter(Boolean).join('\n'),
         });
         if (result.ok) {
           booking = {
@@ -120,10 +131,19 @@ router.post('/', submitLimiter, async (req, res, next) => {
             status: 'confirmed',
           };
 
-          // Schedule our own SMTP reminder to land 2 hours before the meeting.
-          // - Cal.com still sends its own immediate confirmation email (untouched).
-          // - If the meeting is <2h away, the reminder queue sends ASAP on the next tick.
-          // Gated by env flag so deployments can opt out without code changes.
+          // Visitor-facing email #1: immediate confirmation. With Cal.com's confirmation
+          // now redirected to the fake attendee email, this is the ONLY confirmation the
+          // visitor sees. Fire-and-forget — never block lead capture if SMTP is flaky.
+          if (process.env.EMAIL_BOOKING_CONFIRMATIONS !== 'false') {
+            try {
+              await sendBookingConfirmation(lead, result.booking, timezone);
+            } catch (err) {
+              logger.warn({ err: err.message, lead: { id: lead.id } }, 'booking confirmation email failed');
+            }
+          }
+
+          // Visitor-facing email #2: 2h-before reminder (or ASAP if meeting is <2h away).
+          // Persisted in booking_reminders so it survives server restarts. Gated by env flag.
           if (process.env.EMAIL_BOOKING_REMINDERS !== 'false') {
             try {
               await scheduleReminder({ lead, booking: result.booking, timezone });
