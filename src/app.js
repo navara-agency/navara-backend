@@ -16,6 +16,7 @@ const emailConfigRoutes = require('./routes/emailConfig');
 const translationsRoutes = require('./routes/translations');
 const uploadRoutes = require('./routes/upload');
 const calcomRoutes = require('./routes/calcom');
+const emailTemplatesRoutes = require('./routes/emailTemplates');
 
 function createApp() {
   const app = express();
@@ -88,6 +89,7 @@ function createApp() {
   app.use('/api/translations', translationsRoutes);
   app.use('/api/upload', uploadRoutes);
   app.use('/api/calcom', calcomRoutes);
+  app.use('/api/email-templates', emailTemplatesRoutes);
 
   app.use((req, res, _next) => {
     res.status(404).json({ error: `Not found: ${req.method} ${req.path}` });
