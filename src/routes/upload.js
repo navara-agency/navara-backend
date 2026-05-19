@@ -5,10 +5,19 @@ const { cloudinary, makeStorage, ALLOWED_FORMATS } = require('../config/cloudina
 
 const router = express.Router();
 
-const VALID_TYPES = ['image', 'video', 'logo'];
+const VALID_TYPES = ['image', 'video', 'logo', 'attachment'];
+
+// Per-type size caps. Attachments are capped tightly because SMTP servers (including
+// Hostinger) reject large messages — anything over ~10 MB risks silent bounces.
+const SIZE_LIMITS = {
+  image: 100 * 1024 * 1024,
+  video: 100 * 1024 * 1024,
+  logo: 100 * 1024 * 1024,
+  attachment: 10 * 1024 * 1024,
+};
 
 function uploaderFor(type) {
-  return multer({ storage: makeStorage(type), limits: { fileSize: 100 * 1024 * 1024 } });
+  return multer({ storage: makeStorage(type), limits: { fileSize: SIZE_LIMITS[type] || 100 * 1024 * 1024 } });
 }
 
 function ext(filename) {
@@ -41,7 +50,13 @@ router.post('/', requireAuth, (req, res, next) => {
 
     const url = req.file.path || req.file.secure_url;
     const publicId = req.file.filename || req.file.public_id;
-    const out = { url, publicId };
+    const out = {
+      url,
+      publicId,
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
+      sizeBytes: req.file.size,
+    };
 
     if (type === 'video') {
       // Cloudinary auto-generated thumbnail: replace video extension with .jpg

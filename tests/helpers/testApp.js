@@ -55,7 +55,7 @@ async function seedSingletons() {
 async function truncateAll() {
   const models = require('../../src/models');
   // Order matters less here since there are no FKs — but reset all tables
-  const truncatable = ['Lead', 'BookingReminder', 'CaseStudy', 'Testimonial', 'Logo', 'FaqItem', 'Translation'];
+  const truncatable = ['Lead', 'BookingReminder', 'CaseStudy', 'Testimonial', 'Logo', 'FaqItem', 'Translation', 'EmailTemplate', 'AdminUser'];
   for (const name of truncatable) {
     if (models[name]) await models[name].destroy({ where: {}, truncate: true });
   }

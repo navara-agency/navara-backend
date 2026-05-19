@@ -50,8 +50,57 @@ function formatLeadBody(lead) {
   ].join('\n');
 }
 
+/**
+ * Common send pipeline: takes a rendered template (output of renderTemplate) + the
+ * defaults that apply when the template's recipient fields are null, and dispatches via
+ * nodemailer. Handles attachments, comma-separated lists for CC/BCC, and falls back to
+ * the EmailConfig defaults when admin hasn't overridden a given field.
+ *
+ * @param {object} rendered   From renderTemplate()
+ * @param {object} defaults   { to, cc?, replyTo? } used when template has no override
+ */
+async function dispatchRendered(rendered, defaults) {
+  const { transport, fromName: configFromName, fromEmail: configFromEmail } = await getTransport();
+
+  // Resolve sender/recipient values: template override → defaults → EmailConfig.
+  const fromName = rendered.fromName || configFromName;
+  const fromEmail = rendered.fromEmail || configFromEmail;
+  const to = rendered.toAddress || defaults.to;
+  const cc = rendered.ccAddress || defaults.cc || undefined;
+  const bcc = rendered.bccAddress || undefined;
+  const replyTo = rendered.replyToAddress || defaults.replyTo || undefined;
+
+  if (!to) throw new Error('No To address resolved (template + default both empty)');
+
+  // Nodemailer accepts comma-separated strings for to/cc/bcc directly, so admins can
+  // type "a@x.com, b@y.com" into the dashboard fields.
+  const message = {
+    from: `"${fromName}" <${fromEmail}>`,
+    to,
+    subject: rendered.subject,
+    text: rendered.text,
+    ...(rendered.html ? { html: rendered.html } : {}),
+    ...(cc ? { cc } : {}),
+    ...(bcc ? { bcc } : {}),
+    ...(replyTo ? { replyTo } : {}),
+  };
+
+  // Attachments — nodemailer downloads each URL and attaches as a real MIME part. We pass
+  // the original filename so the recipient sees a sensible "Save as" name rather than
+  // Cloudinary's hashed public_id.
+  if (Array.isArray(rendered.attachments) && rendered.attachments.length) {
+    message.attachments = rendered.attachments.map((a) => ({
+      filename: a.filename || 'attachment',
+      path: a.url,
+      ...(a.contentType ? { contentType: a.contentType } : {}),
+    }));
+  }
+
+  await transport.sendMail(message);
+}
+
 async function sendLeadNotification(lead) {
-  const { transport, fromName, fromEmail, notifyEmail } = await getTransport();
+  const { fromEmail, notifyEmail } = await getTransport();
   if (!notifyEmail) throw new Error('notifyEmail not configured');
 
   const rendered = await renderTemplate('lead_notification', {
@@ -67,17 +116,14 @@ async function sendLeadNotification(lead) {
     leadNote: lead.note || '(none)',
     leadId: lead.id,
     submittedAt: lead.submittedAt?.toISOString?.() || String(lead.submittedAt || ''),
+    // Recipient variables — usable in To/CC/BCC fields
+    notifyEmail,
+    fromEmail,
   });
   // Template disabled — admin explicitly turned it off. Treat as success (no-op).
   if (!rendered) return;
 
-  await transport.sendMail({
-    from: `"${fromName}" <${fromEmail}>`,
-    to: notifyEmail,
-    subject: rendered.subject,
-    text: rendered.text,
-    ...(rendered.html ? { html: rendered.html } : {}),
-  });
+  await dispatchRendered(rendered, { to: notifyEmail });
 }
 
 async function sendTestEmail() {
@@ -124,7 +170,7 @@ async function sendBookingConfirmation(lead, booking, timezone) {
   if (!lead?.email) throw new Error('lead.email required');
   if (!booking) throw new Error('booking required');
 
-  const { transport, fromName, fromEmail, notifyEmail } = await getTransport();
+  const { fromName, fromEmail, notifyEmail } = await getTransport();
 
   const start = booking.start || booking.startTime || null;
   const end = booking.end || booking.endTime || null;
@@ -146,19 +192,17 @@ async function sendBookingConfirmation(lead, booking, timezone) {
     meetingDuration: durationMin,
     meetingUrl,
     rescheduleUrl: reschedule,
+    notifyEmail,
+    fromEmail,
   }, {
     preheader: startPretty ? `Your discovery call is confirmed for ${startPretty}.` : 'Your discovery call is confirmed.',
   });
   if (!rendered) return;
 
-  await transport.sendMail({
-    from: `"${fromName}" <${fromEmail}>`,
+  await dispatchRendered(rendered, {
     to: lead.email,
-    cc: notifyEmail || undefined,
+    cc: notifyEmail,
     replyTo: notifyEmail || fromEmail,
-    subject: rendered.subject,
-    text: rendered.text,
-    ...(rendered.html ? { html: rendered.html } : {}),
   });
 }
 
@@ -175,7 +219,7 @@ async function sendBookingReminder(lead, booking, timezone) {
   if (!lead?.email) throw new Error('lead.email required');
   if (!booking) throw new Error('booking required');
 
-  const { transport, fromName, fromEmail, notifyEmail } = await getTransport();
+  const { fromName, fromEmail, notifyEmail } = await getTransport();
 
   const start = booking.start || booking.startTime || null;
   const end = booking.end || booking.endTime || null;
@@ -204,19 +248,17 @@ async function sendBookingReminder(lead, booking, timezone) {
     meetingUrl,
     rescheduleUrl: reschedule,
     minutesUntil,
+    notifyEmail,
+    fromEmail,
   }, {
     preheader: startPretty ? `Reminder: your call is at ${startPretty}.` : 'Reminder: your call is coming up.',
   });
   if (!rendered) return;
 
-  await transport.sendMail({
-    from: `"${fromName}" <${fromEmail}>`,
+  await dispatchRendered(rendered, {
     to: lead.email,
-    cc: notifyEmail || undefined,
+    cc: notifyEmail,
     replyTo: notifyEmail || fromEmail,
-    subject: rendered.subject,
-    text: rendered.text,
-    ...(rendered.html ? { html: rendered.html } : {}),
   });
 }
 

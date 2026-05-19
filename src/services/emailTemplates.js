@@ -122,6 +122,13 @@ const VARIABLE_CATALOG = {
   ],
 };
 
+// Variables that are valid in recipient fields (To / CC / BCC / Reply-To) on ANY template,
+// in addition to the template-specific variables. Surfaced separately in the dashboard.
+const RECIPIENT_EXTRA_VARS = [
+  { name: 'notifyEmail', description: 'Admin notification email from EmailConfig' },
+  { name: 'fromEmail',   description: 'Default sender email from EmailConfig' },
+];
+
 // ─── Default templates (used as fallback + DB seed) ──────────────────────────────
 
 const DEFAULTS = {
@@ -249,19 +256,27 @@ async function loadTemplate(templateKey) {
   try {
     const { EmailTemplate } = require('../models');
     const row = await EmailTemplate.findOne({ where: { templateKey } });
-    if (!row) return { ...DEFAULTS[templateKey], enabled: true, fromDb: false };
+    if (!row) return { ...DEFAULTS[templateKey], enabled: true, fromDb: false, attachments: [] };
     if (!row.enabled) return null;
     return {
       subject: row.subject,
       bodyText: row.bodyText,
       bodyHtml: row.bodyHtml,
       enabled: row.enabled,
+      // Recipient + sender overrides — null fields fall through to defaults at send time.
+      toAddress: row.toAddress,
+      ccAddress: row.ccAddress,
+      bccAddress: row.bccAddress,
+      replyToAddress: row.replyToAddress,
+      fromName: row.fromName,
+      fromEmail: row.fromEmail,
+      attachments: Array.isArray(row.attachments) ? row.attachments : [],
       fromDb: true,
     };
   } catch (err) {
     // DB unreachable shouldn't kill an email — log + fall back to defaults.
     logger.warn({ err: err.message, templateKey }, 'email template DB read failed; using default');
-    return { ...DEFAULTS[templateKey], enabled: true, fromDb: false };
+    return { ...DEFAULTS[templateKey], enabled: true, fromDb: false, attachments: [] };
   }
 }
 
@@ -285,7 +300,21 @@ async function renderTemplate(templateKey, vars, opts = {}) {
     const innerHtml = substitute(tpl.bodyHtml, vars, { escape: true });
     html = wrapInLayout({ preheader: opts.preheader, innerHtml });
   }
-  return { subject, text, html };
+  // Apply variable substitution to recipient + sender strings too so admins can use
+  // {{visitorEmail}} / {{notifyEmail}} etc. as the To / CC / Reply-To value.
+  const sub = (val) => (val ? substitute(val, vars, { escape: false }).trim() : null);
+  return {
+    subject,
+    text,
+    html,
+    toAddress: sub(tpl.toAddress),
+    ccAddress: sub(tpl.ccAddress),
+    bccAddress: sub(tpl.bccAddress),
+    replyToAddress: sub(tpl.replyToAddress),
+    fromName: sub(tpl.fromName),
+    fromEmail: sub(tpl.fromEmail),
+    attachments: tpl.attachments || [],
+  };
 }
 
 // Used by the seeder + admin "reset" route to (re)create the canonical default rows.
@@ -324,6 +353,7 @@ module.exports = {
   TEMPLATE_KEYS,
   DEFAULTS,
   VARIABLE_CATALOG,
+  RECIPIENT_EXTRA_VARS,
   loadTemplate,
   renderTemplate,
   seedDefaults,

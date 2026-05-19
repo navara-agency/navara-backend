@@ -4,6 +4,7 @@ const {
   TEMPLATE_KEYS,
   DEFAULTS,
   VARIABLE_CATALOG,
+  RECIPIENT_EXTRA_VARS,
   loadTemplate,
   renderTemplate,
   seedDefaults,
@@ -88,10 +89,19 @@ router.get('/:key', requireAuth, async (req, res, next) => {
       bodyText,
       bodyHtml,
       enabled,
+      // Recipient + sender overrides (null = use defaults)
+      toAddress: row?.toAddress ?? null,
+      ccAddress: row?.ccAddress ?? null,
+      bccAddress: row?.bccAddress ?? null,
+      replyToAddress: row?.replyToAddress ?? null,
+      fromName: row?.fromName ?? null,
+      fromEmail: row?.fromEmail ?? null,
+      attachments: Array.isArray(row?.attachments) ? row.attachments : [],
       updatedAt: row?.updatedAt ?? null,
       fromDb: Boolean(row),
       defaults: DEFAULTS[key],
       variables: VARIABLE_CATALOG[key] || [],
+      recipientVariables: RECIPIENT_EXTRA_VARS,
       htmlSupported: DEFAULTS[key].bodyHtml != null,
     });
   } catch (err) {
@@ -117,6 +127,40 @@ router.put('/:key', requireAuth, async (req, res, next) => {
     else bodyHtml = undefined;
     const enabled = typeof body.enabled === 'boolean' ? body.enabled : undefined;
 
+    // Recipient + sender overrides: accept string (set) OR null (clear) OR undefined (no
+    // change). Empty strings are normalised to null so the send pipeline falls back to defaults.
+    const nullableString = (v) => {
+      if (v === null) return null;
+      if (typeof v !== 'string') return undefined;
+      const trimmed = v.trim();
+      return trimmed === '' ? null : trimmed;
+    };
+    const toAddress = nullableString(body.toAddress);
+    const ccAddress = nullableString(body.ccAddress);
+    const bccAddress = nullableString(body.bccAddress);
+    const replyToAddress = nullableString(body.replyToAddress);
+    const fromName = nullableString(body.fromName);
+    const fromEmail = nullableString(body.fromEmail);
+
+    // Attachments: validated array of objects with { filename, url } at minimum. We don't
+    // re-validate URLs are reachable here — that happens at send time.
+    let attachments;
+    if (body.attachments === null) {
+      attachments = [];
+    } else if (Array.isArray(body.attachments)) {
+      attachments = body.attachments
+        .filter((a) => a && typeof a === 'object' && typeof a.url === 'string')
+        .map((a) => ({
+          filename: typeof a.filename === 'string' ? a.filename : 'attachment',
+          url: a.url,
+          publicId: typeof a.publicId === 'string' ? a.publicId : null,
+          contentType: typeof a.contentType === 'string' ? a.contentType : null,
+          sizeBytes: typeof a.sizeBytes === 'number' ? a.sizeBytes : null,
+        }));
+    } else {
+      attachments = undefined;
+    }
+
     if (subject == null || bodyText == null) {
       return res.status(400).json({ error: 'subject and bodyText are required' });
     }
@@ -131,6 +175,13 @@ router.put('/:key', requireAuth, async (req, res, next) => {
       row.bodyText = bodyText;
       if (bodyHtml !== undefined) row.bodyHtml = bodyHtml;
       if (enabled !== undefined) row.enabled = enabled;
+      if (toAddress !== undefined) row.toAddress = toAddress;
+      if (ccAddress !== undefined) row.ccAddress = ccAddress;
+      if (bccAddress !== undefined) row.bccAddress = bccAddress;
+      if (replyToAddress !== undefined) row.replyToAddress = replyToAddress;
+      if (fromName !== undefined) row.fromName = fromName;
+      if (fromEmail !== undefined) row.fromEmail = fromEmail;
+      if (attachments !== undefined) row.attachments = attachments;
       await row.save();
     } else {
       row = await EmailTemplate.create({
@@ -139,6 +190,13 @@ router.put('/:key', requireAuth, async (req, res, next) => {
         bodyText,
         bodyHtml: bodyHtml ?? DEFAULTS[key].bodyHtml,
         enabled: enabled ?? true,
+        toAddress: toAddress ?? null,
+        ccAddress: ccAddress ?? null,
+        bccAddress: bccAddress ?? null,
+        replyToAddress: replyToAddress ?? null,
+        fromName: fromName ?? null,
+        fromEmail: fromEmail ?? null,
+        attachments: attachments ?? [],
       });
     }
     return res.json({
@@ -146,6 +204,13 @@ router.put('/:key', requireAuth, async (req, res, next) => {
       subject: row.subject,
       bodyText: row.bodyText,
       bodyHtml: row.bodyHtml,
+      toAddress: row.toAddress,
+      ccAddress: row.ccAddress,
+      bccAddress: row.bccAddress,
+      replyToAddress: row.replyToAddress,
+      fromName: row.fromName,
+      fromEmail: row.fromEmail,
+      attachments: row.attachments || [],
       enabled: row.enabled,
       updatedAt: row.updatedAt,
     });
