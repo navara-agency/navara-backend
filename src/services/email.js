@@ -180,7 +180,10 @@ async function sendBookingConfirmation(lead, booking, timezone) {
     : (booking.uid ? `https://cal.com/booking/${booking.uid}` : '');
 
   const startPretty = formatStartTime(start, timezone) || '';
-  const durationMin = (end && start) ? Math.round((new Date(end) - new Date(start)) / 60000) : '';
+  // Prefer explicit duration field from Cal.com; otherwise compute from end-start; fall
+  // back to 30 (discovery-call default) so the email never shows "Duration: minutes" empty.
+  const durationMin = booking.duration
+    || ((end && start) ? Math.round((new Date(end) - new Date(start)) / 60000) : 30);
   const dayShort = startPretty ? startPretty.split(',')[0] : '';
 
   const rendered = await renderTemplate('booking_confirmation', {
@@ -229,7 +232,8 @@ async function sendBookingReminder(lead, booking, timezone) {
     : (booking.uid ? `https://cal.com/booking/${booking.uid}` : '');
 
   const startPretty = formatStartTime(start, timezone) || '';
-  const durationMin = (end && start) ? Math.round((new Date(end) - new Date(start)) / 60000) : '';
+  const durationMin = booking.duration
+    || ((end && start) ? Math.round((new Date(end) - new Date(start)) / 60000) : 30);
   const dayShort = startPretty ? startPretty.split(',')[0] : '';
 
   // Minutes until the call drives both the subject and the urgency wording in the body.

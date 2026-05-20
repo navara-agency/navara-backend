@@ -27,6 +27,18 @@ function computeDueAt(bookingStart, now = new Date()) {
   return new Date(Math.max(reminderTime, now.getTime()));
 }
 
+// Sequelize JSON columns SHOULD round-trip as parsed objects on MySQL, but in practice
+// some driver/version combos return the raw string. Parse defensively so a stale row from
+// before this fix still works. Returns {} on parse failure.
+function parseSnapshot(value) {
+  if (!value) return {};
+  if (typeof value === 'object') return value;
+  if (typeof value === 'string') {
+    try { return JSON.parse(value); } catch { return {}; }
+  }
+  return {};
+}
+
 /**
  * Persist a reminder row for a newly-created Cal.com booking. Idempotent on (leadId, bookingUid):
  * if a reminder already exists for the same booking it's left alone so retries don't dupe.
@@ -109,7 +121,24 @@ async function processDue() {
           continue;
         }
 
-        await sendBookingReminder(lead, row.bookingSnapshot || {}, row.timezone);
+        // Reconstruct the booking object from explicit columns + parsed snapshot. We do
+        // this defensively because MySQL JSON columns can round-trip as a string under
+        // some sequelize/driver combinations, which would make snapshot.start undefined
+        // and produce a reminder email with empty "When/Where/Duration" rows.
+        const snapshot = parseSnapshot(row.bookingSnapshot);
+        const reconstructed = {
+          // Explicit row columns take precedence — these are guaranteed populated at
+          // schedule time. Fall back to the snapshot for fields we didn't break out.
+          start: row.bookingStart ? new Date(row.bookingStart).toISOString() : (snapshot.start || snapshot.startTime),
+          end: snapshot.end || snapshot.endTime,
+          meetingUrl: row.meetingUrl || snapshot.meetingUrl || snapshot.location,
+          uid: row.bookingUid || snapshot.uid,
+          rescheduleUid: snapshot.rescheduleUid,
+          // Carry the rest of the snapshot through for any future references.
+          ...snapshot,
+        };
+
+        await sendBookingReminder(lead, reconstructed, row.timezone);
         row.status = 'sent';
         row.sentAt = new Date();
         row.attempts = row.attempts + 1;
