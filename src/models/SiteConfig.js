@@ -52,6 +52,10 @@ module.exports = (sequelize) => {
         field: 'ksa_cta_subtext',
       },
       ksaCalLink: { type: DataTypes.STRING(255), allowNull: true, field: 'ksa_cal_link' },
+      // Trust card on homepage's "Who we are" section. Structured JSON so admins can
+      // toggle enabled, edit the pill label, big metric, captions, and the bottom stats
+      // array all from the dashboard. Null = use in-code defaults.
+      trustCard: { type: DataTypes.JSON, allowNull: true, field: 'trust_card' },
     },
     {
       tableName: 'site_config',
