@@ -44,9 +44,10 @@ module.exports = (sequelize) => {
           const a = !!this.videoUrl;
           const b = !!this.videoPublicId;
           const c = !!this.thumbnailUrl;
-          // Cloudinary uploads set all three; external/YouTube URLs only set videoUrl — that's allowed.
+          // Cloudinary video uploads must have all three fields together.
+          // thumbnailUrl alone (no videoUrl) is valid for photo-only testimonials.
+          // videoUrl alone (no thumbnailUrl) is valid for external/YouTube URLs.
           if (b && (!a || !c)) throw new Error('videoPublicId requires videoUrl and thumbnailUrl');
-          if (c && !a) throw new Error('thumbnailUrl requires videoUrl');
         },
       },
     }
