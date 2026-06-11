@@ -6,7 +6,7 @@ module.exports = (sequelize) => {
     {
       id: { type: DataTypes.INTEGER.UNSIGNED, primaryKey: true, autoIncrement: true },
       quote: { type: DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } },
-      author: { type: DataTypes.STRING(255), allowNull: false, validate: { notEmpty: true } },
+      author: { type: DataTypes.STRING(255), allowNull: true },
       title: { type: DataTypes.STRING(255), allowNull: true },
       company: { type: DataTypes.STRING(255), allowNull: true },
       industry: { type: DataTypes.STRING(255), allowNull: true },
@@ -44,9 +44,9 @@ module.exports = (sequelize) => {
           const a = !!this.videoUrl;
           const b = !!this.videoPublicId;
           const c = !!this.thumbnailUrl;
-          if (!(a === b && b === c)) {
-            throw new Error('videoUrl, videoPublicId, and thumbnailUrl must all be set or all null');
-          }
+          // Cloudinary uploads set all three; external/YouTube URLs only set videoUrl — that's allowed.
+          if (b && (!a || !c)) throw new Error('videoPublicId requires videoUrl and thumbnailUrl');
+          if (c && !a) throw new Error('thumbnailUrl requires videoUrl');
         },
       },
     }
