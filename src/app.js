@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const { errorHandler } = require('./middleware/errorHandler');
 const logger = require('./config/logger');
@@ -53,6 +54,14 @@ function createApp() {
   // Bumped from 1mb to 5mb so PUT /api/translations/:lang works for full-tree saves.
   app.use(express.json({ limit: '5mb' }));
 
+  // Static frontend — only active when STATIC_DIR env var points at a Vite dist/ folder.
+  // On Hostinger the reverse proxy routes ALL traffic through Node.js, so this lets the
+  // backend serve brand assets, favicons, and the SPA shell without a separate web server.
+  const STATIC_DIR = process.env.STATIC_DIR || null;
+  if (STATIC_DIR) {
+    app.use(express.static(STATIC_DIR, { maxAge: '7d' }));
+  }
+
   // Health check — pings DB and reports which integrations have credentials configured.
   // Useful for uptime monitoring and post-deploy smoke checks. Never reveals secret values.
   app.get('/api/health', async (_req, res) => {
@@ -92,6 +101,16 @@ function createApp() {
   app.use('/api/email-templates', emailTemplatesRoutes);
 
   app.use((req, res, _next) => {
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: `Not found: ${req.method} ${req.path}` });
+    }
+    const STATIC_DIR = process.env.STATIC_DIR || null;
+    if (STATIC_DIR) {
+      const indexPath = path.join(STATIC_DIR, 'index.html');
+      return res.sendFile(indexPath, (err) => {
+        if (err) res.status(404).json({ error: 'Frontend index.html not found' });
+      });
+    }
     res.status(404).json({ error: `Not found: ${req.method} ${req.path}` });
   });
 
