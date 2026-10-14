@@ -82,10 +82,11 @@ router.post('/', submitLimiter, async (req, res, next) => {
     const data = sanitiseLeadInput(req.body);
     const { preferredDateTime, timezone } = pickBookingInputs(req.body);
 
-    // Required fields — only `services` and `note` are optional now. `market` is derived
-    // from the phone, so it doesn't need to be in this list.
+    // Required fields — `services`, `note` and `preferredDateTime` are optional. The visitor
+    // picks a call time in the Cal.com popup after submitting, so a slot is usually absent.
+    // `market` is derived from the phone, so it doesn't need to be in this list.
     if (!data.name || !data.company || !data.industry || !data.goal || !data.budget
-        || !data.phone || !data.email || !preferredDateTime) {
+        || !data.phone || !data.email) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     if (!VALID_MARKETS.includes(data.market)) {
